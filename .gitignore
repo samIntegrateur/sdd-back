@@ -106,8 +106,11 @@ typings/
 
 # ----- Custom -----
 .idea
+todo.md
 
 # Keep a file to avoid error due to unexisting folder
 dist/*
 !dist/.gitkeep
 
+#schema generated for graphql
+schema.gql

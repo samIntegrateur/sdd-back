@@ -1,19 +1,20 @@
-import { Query, Arg, Resolver, Mutation, UseMiddleware, Ctx } from 'type-graphql';
+import { Query, Arg, Resolver, Mutation, Ctx } from 'type-graphql';
 import bcrypt from 'bcryptjs';
 import { User, UserModel } from '../../entities/User';
 import { RegisterInput } from './RegisterInput';
-import { isAuth } from '../../middleware/isAuth';
+// import { isAuth } from '../../middleware/isAuth';
 import { AppContext } from '../../types/AppContext';
 
 @Resolver()
 export class RegisterResolver {
 
-  @UseMiddleware(isAuth)
+  // @UseMiddleware(isAuth)
   @Query(() => String)
   async hello() {
     return "Hello world";
   }
 
+  // todo, check usernname and email unicity
   @Mutation(() => User)
   async register(
     @Arg('data') {
@@ -41,7 +42,6 @@ export class RegisterResolver {
     }
 
     console.log('user', user);
-    ctx.req.session!.userId = user.id;
 
     return user;
   }

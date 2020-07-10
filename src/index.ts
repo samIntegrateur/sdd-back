@@ -1,60 +1,49 @@
+import "reflect-metadata";
 import dotenv from 'dotenv';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
-import { connect } from 'mongoose';;
-import 'reflect-metadata';
-import session from 'express-session';
-const MongoDBStore = require('connect-mongodb-session')(session);
+const mongoose = require('mongoose');
 import cors from 'cors';
 import { buildSchema } from 'type-graphql';
-
-// resolvers
-import { OfferResolver } from './resolvers/offer/OfferResolver';
-import { RegisterResolver } from './resolvers/user/RegisterResolver';
-import { LoginResolver } from './resolvers/user/LoginResolver';
+import { envVarCheck } from './shared/utils/envVarCheck';
+import cookieParser from 'cookie-parser';
+import authRouter from './rest/routes/auth';
 
 dotenv.config();
 
+const envVars = process.env;
+
+envVarCheck(envVars);
+
 const {
-  NODE_ENV,
   MONGO_USER,
   MONGO_PASSWORD,
   MONGO_HOST,
   MONGO_DB,
-  DOMAIN,
   PORT,
   FRONT_URL,
-  SESSION_KEY,
-  SESSION_NAME,
-} = process.env;
+} = envVars;
 
 const MONGODB_URI = `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}.mongodb.net/${MONGO_DB}`;
-
 
 const main = async () => {
 
   // Will generate a schema.gql with the npm run build-tsc commad
   // https://blog.logrocket.com/integrating-typescript-graphql/
   const schema = await buildSchema({
-    resolvers: [LoginResolver, RegisterResolver, OfferResolver],
+    resolvers: [__dirname + '/resolvers/**/*.ts'],
   })
 
-  // configure cnx between session and mongodb
-  const store = new MongoDBStore({
-    uri: MONGODB_URI,
-    collection: 'sessions',
-  });
-
-  const mongoose = await connect(MONGODB_URI, {
+  const mongooseCnx = await mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
   });
-  await mongoose.connection;
+  await mongooseCnx.connection;
 
-  const server = new ApolloServer({
+  const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }) => ({ req }), // access to express request in our resolvers
+    context: ({ req, res }) => ({ req, res }), // access to express request in our resolvers
     playground: {
       settings: {
         'request.credentials': 'include', // doesn't authorize cookies otherwise
@@ -64,33 +53,21 @@ const main = async () => {
 
   const app = express();
 
+  app.use(cookieParser());
+
   // Cors access
   app.use(cors({
     credentials: true,
-    optionsSuccessStatus: 200,
-    origin: FRONT_URL,
+    origin: "*", // for test
+    // origin: FRONT_URL,
   }))
 
-  // Configure session
-  app.use(session({
-    store: store, // store it in mongodb
-    name: SESSION_NAME,
-    secret: SESSION_KEY as string,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      domain: DOMAIN,
-      secure: NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-    },
-  }));
+  app.use('/auth', authRouter);
 
-
-  server.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen({ port: PORT }, () =>
-    console.log(`🚀 Server ready and listening at ==> http://localhost:${PORT}${server.graphqlPath}`))
+    console.log(`🚀 Server ready and listening at ==> http://localhost:${PORT}${apolloServer.graphqlPath}`))
 }
 
 main().catch((error) => {

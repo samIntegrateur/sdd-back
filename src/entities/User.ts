@@ -2,7 +2,6 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { Prop, getModelForClass } from '@typegoose/typegoose';
 
 
-
 @ObjectType({ description: 'The User model' })
 export class User {
   @Field(() => ID)
@@ -20,13 +19,18 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Field()
-  @Prop()
+  @Field({ nullable: true })
+  @Prop({ required: false })
   firstName?: string;
 
-  @Field()
-  @Prop()
+  @Field({ nullable: true })
+  @Prop({ required: false })
   lastName?: string;
+
+  // Add version for forget password or account hacked
+  // https://www.youtube.com/watch?v=25GS0MLT8JU around 1:18
+  @Prop( { type: String, default: 0 })
+  tokenVersion?: number;
 }
 
 export const UserModel = getModelForClass(User);

@@ -29,6 +29,7 @@ export class User {
 
   // Add version for forget password or account hacked
   // https://www.youtube.com/watch?v=25GS0MLT8JU around 1:18
+  // todo: reimplement this kind of logic for the current token system
   @Prop( { type: String, default: 0 })
   tokenVersion?: number;
 }

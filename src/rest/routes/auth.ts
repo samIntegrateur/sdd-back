@@ -1,8 +1,8 @@
 import express from 'express';
-import { refreshToken } from '../controllers/auth';
+import { isAuth } from '../controllers/auth';
 
 const authRouter = express.Router();
 
-authRouter.post('/refresh-token', refreshToken);
+authRouter.post('/is-auth', isAuth);
 
 export default authRouter;

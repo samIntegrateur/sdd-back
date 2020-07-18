@@ -9,9 +9,8 @@ const envVarList = [
   'DOMAIN',
   'PORT',
   'FRONT_URL',
-  'ACCESS_TOKEN_SECRET',
-  'REFRESH_TOKEN_SECRET',
-  'AUTH_TOKEN_COOKIE_NAME',
+  'TOKEN_SECRET',
+  'TOKEN_NAME',
 ];
 
 export const envVarCheck = (envVarsProvided: { [key: string]: string | undefined }) => {

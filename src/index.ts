@@ -53,14 +53,13 @@ const main = async () => {
 
   const app = express();
 
-  app.use(cookieParser());
-
   // Cors access
   app.use(cors({
     credentials: true,
-    origin: "*", // for test
-    // origin: FRONT_URL,
+    origin: FRONT_URL,
   }))
+
+  app.use(cookieParser());
 
   app.use('/auth', authRouter);
 

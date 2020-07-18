@@ -1,9 +1,9 @@
-import { Query, Arg, Resolver, Mutation, Ctx } from 'type-graphql';
+import { Query, Arg, Resolver, Mutation, Ctx, UseMiddleware } from 'type-graphql';
 import bcrypt from 'bcryptjs';
 import { User, UserModel } from '../../entities/User';
 import { RegisterInput } from './RegisterInput';
-// import { isAuth } from '../../middleware/isAuth';
 import { AppContext } from '../../types/AppContext';
+import { isAuth } from '../../middleware/isAuth';
 
 @Resolver()
 export class RegisterResolver {
@@ -14,7 +14,16 @@ export class RegisterResolver {
     return "Hello world";
   }
 
-  // todo, check usernname and email unicity
+  @UseMiddleware(isAuth)
+  @Query(() => String)
+  async helloLogged(
+    @Ctx() ctx: AppContext,
+  ) {
+    console.log('payload', ctx.payload);
+    return "Hello user";
+  }
+
+  // todo, check username and email unicity
   @Mutation(() => User)
   async register(
     @Arg('data') {

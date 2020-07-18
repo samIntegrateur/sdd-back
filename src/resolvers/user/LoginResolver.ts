@@ -2,14 +2,11 @@ import { Arg, Resolver, Mutation, Ctx, ObjectType, Field } from 'type-graphql';
 import { User, UserModel } from '../../entities/User';
 import bcrypt from 'bcryptjs';
 import { AppContext } from '../../types/AppContext';
-import { sendRefreshToken } from '../../shared/auth/sendRefreshToken';
-import { createAccessToken, createRefreshToken } from '../../shared/auth/auth';
+import { createToken } from '../../shared/auth/auth';
+import { sendCookieToken } from '../../shared/auth/sendCookieToken';
 
 @ObjectType()
 class LoginResponse {
-
-  @Field()
-  accessToken: string;
 
   @Field(() => User)
   user: User;
@@ -27,7 +24,7 @@ export class LoginResolver {
 
     console.log('login');
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }) as User;
 
     if (!user) {
       throw new Error("L'e-mail est invalide.");
@@ -39,12 +36,9 @@ export class LoginResolver {
       throw new Error("Le mode de passe est invalide.");
     }
 
-    // this cookie can be sent with a post to "refresh-token" to get a new accessToken
-    sendRefreshToken(res, createRefreshToken(user));
+    sendCookieToken(res, createToken(user));
 
-    // this one will be sent in headers for authent only queries (see isAuth)
     return {
-      accessToken: createAccessToken(user),
       user,
     }
   }

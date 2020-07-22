@@ -4,6 +4,8 @@ import { User, UserModel } from '../../entities/User';
 import { RegisterInput } from './RegisterInput';
 import { AppContext } from '../../types/AppContext';
 import { isAuth } from '../../middleware/isAuth';
+import { sendCookieToken } from '../../shared/auth/sendCookieToken';
+import { createToken } from '../../shared/auth/auth';
 
 @Resolver()
 export class RegisterResolver {
@@ -49,6 +51,8 @@ export class RegisterResolver {
     if (!user) {
       throw new Error("Le compte n'a pas pu être créé.");
     }
+
+    sendCookieToken(ctx.res, createToken(user));
 
     console.log('user', user);
 

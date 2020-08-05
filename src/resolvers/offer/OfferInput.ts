@@ -1,7 +1,6 @@
-import { Field, ID, InputType } from 'type-graphql';
+import { Field, InputType } from 'type-graphql';
 import { Offer } from '../../entities/Offer';
 import { IsUrl, Length } from 'class-validator';
-import { ObjectId } from 'mongodb';
 
 @InputType()
 export class OfferInput implements Partial<Offer> {
@@ -17,11 +16,4 @@ export class OfferInput implements Partial<Offer> {
   @Field({ nullable: true })
   @IsUrl()
   imageUrl?: string;
-
-  @Field({ nullable: true })
-  @IsUrl()
-  thumbUrl?: string;
-
-  @Field(() => ID)
-  author: ObjectId;
 }

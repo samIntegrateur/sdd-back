@@ -28,7 +28,7 @@ export class RegisterInput implements Partial<User> {
   firstName?: string;
 
   @Field({ nullable: true })
-  @Length(1, 30, { message: "Le nom  doit comporter entre 1 et 30 caractères." })
+  @Length(1, 30, { message: "Le nom doit comporter entre 1 et 30 caractères." })
   lastName?: string;
 
 }

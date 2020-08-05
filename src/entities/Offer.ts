@@ -1,12 +1,13 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Prop, getModelForClass, modelOptions } from '@typegoose/typegoose';
+import { Prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { User } from './User';
-import { Ref } from '../types';
 
-@ObjectType({ description: 'The Offer model' })
-@modelOptions({})
-export class Offer {
+import { WithTimestamps } from './shared/WithTimestamps';
+import { OfferStatus } from './shared/OfferStatus.type';
 
+
+@ObjectType({ implements: WithTimestamps, description: 'The Offer model' })
+export class Offer extends WithTimestamps {
   @Field(() => ID)
   id: string;
 
@@ -18,17 +19,21 @@ export class Offer {
   @Prop({ required: true })
   description: string;
 
-  @Field()
-  @Prop()
+  @Field({ nullable: true })
+  @Prop({ required: false })
   imageUrl?: string;
 
-  @Field()
-  @Prop()
+  @Field({ nullable: true })
+  @Prop({ required: false })
   thumbUrl?: string;
 
   @Field(_type => String)
   @Prop({ ref: User, required: true })
   author: Ref<User>;
+
+  @Field(_type => OfferStatus)
+  @Prop({ required: false, enum: OfferStatus, type: String, default: OfferStatus.AVAILABLE})
+  status?: OfferStatus;
 }
 
-export const OfferModel = getModelForClass(Offer);
+export const OfferModel = getModelForClass(Offer, {schemaOptions: { timestamps: true }});

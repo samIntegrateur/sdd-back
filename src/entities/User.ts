@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Prop, getModelForClass } from '@typegoose/typegoose';
+import { WithTimestamps } from './shared/WithTimestamps';
 
-
-@ObjectType({ description: 'The User model' })
-export class User {
+@ObjectType({ implements: WithTimestamps, description: 'The User model' })
+export class User extends WithTimestamps {
   @Field(() => ID)
   id: string;
 
@@ -30,8 +30,8 @@ export class User {
   // Add version for forget password or account hacked
   // https://www.youtube.com/watch?v=25GS0MLT8JU around 1:18
   // todo: reimplement this kind of logic for the current token system
-  @Prop( { type: String, default: 0 })
+  @Prop( { required: false, type: String, default: 0 })
   tokenVersion?: number;
 }
 
-export const UserModel = getModelForClass(User);
+export const UserModel = getModelForClass(User, { schemaOptions: { timestamps: true }});

@@ -27,7 +27,7 @@ export class Offer extends WithTimestamps {
   @Prop({ required: false })
   thumbUrl?: string;
 
-  @Field(_type => String)
+  @Field(_type => User)
   @Prop({ ref: User, required: true })
   author: Ref<User>;
 

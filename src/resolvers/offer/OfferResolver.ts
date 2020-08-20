@@ -27,7 +27,6 @@ export class OfferResolver {
       title,
       description,
       imageUrl,
-      thumbUrl,
     }: OfferInput,
     @Ctx() ctx: AppContext,
   ): Promise<Offer> {
@@ -48,7 +47,6 @@ export class OfferResolver {
       title,
       description,
       imageUrl,
-      thumbUrl,
       author: user._id,
     })).save();
   }

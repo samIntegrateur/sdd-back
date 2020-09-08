@@ -8,6 +8,7 @@ import { buildSchema } from 'type-graphql';
 import { envVarCheck } from './shared/utils/envVarCheck';
 import cookieParser from 'cookie-parser';
 import authRouter from './rest/routes/auth';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 dotenv.config();
 
@@ -48,7 +49,9 @@ const main = async () => {
       settings: {
         'request.credentials': 'include', // doesn't authorize cookies otherwise
       }
-    }
+    },
+    introspection: true,
+    uploads: false // disable apollo upload property
   });
 
   const app = express();
@@ -62,6 +65,8 @@ const main = async () => {
   app.use(cookieParser());
 
   app.use('/auth', authRouter);
+
+  app.use(graphqlUploadExpress({ maxFileSize: 5_000_000, maxFiles: 10 }));
 
   apolloServer.applyMiddleware({ app, cors: false });
 

@@ -11,6 +11,10 @@ const envVarList = [
   'FRONT_URL',
   'TOKEN_SECRET',
   'TOKEN_NAME',
+  'AWS_S3_ID',
+  'AWS_S3_SECRET',
+  'AWS_S3_BUCKET',
+  'AWS_S3_REGION',
 ];
 
 export const envVarCheck = (envVarsProvided: { [key: string]: string | undefined }) => {

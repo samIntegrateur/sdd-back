@@ -36,7 +36,7 @@
     "mongoose": "^5.9.17",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.0.0-rc.2",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
